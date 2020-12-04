@@ -1,4 +1,7 @@
-class Terrain {
+import seedrandom from 'seedrandom';
+import { d3 } from './d3';
+
+export class Terrain {
   constructor() {
     const POINT_COUNT = 1024;
     const POINT_MIN = 16;
@@ -7,7 +10,7 @@ class Terrain {
       [180, 90]
     ];
     const SEED = 0;
-    var srand = new Math.seedrandom(SEED);
+    var srand = seedrandom(SEED);
     var $this = this;
     /**[[lat,lon,height,fidelity]] */
     var heightMap = [];
@@ -189,7 +192,7 @@ class Terrain {
     }
     this.generatePoints = function(count, bounds, fidelity) {
       //TODO this doesn't allow new worlds
-      srand = new Math.seedrandom(SEED);
+      srand = seedrandom(SEED);
       var count = count || POINT_COUNT;
       var bounds = bounds || {
         'type': 'Sphere'

@@ -6,32 +6,9 @@
     <title>Generating fantasy maps, on a globe</title>
     <link rel="stylesheet" href="styles.css">
 
-    <!-- keep track of the state of the world, but no UI logic -->
-    <script src="terrain.js"></script>
-    <!-- interacts with the browner to draw, has an internal terrain object -->
-    <script src="terrainUI.js"></script>
-    <!--  -->
-    <script src="geopolitical.js"></script>
-    <!-- common javascript library -->
-    <script src="https://d3js.org/d3.v6.js"></script>
-    <!-- map projection support -->
-    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
-    <!-- more map projection support -->
-    <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
-    <!-- library for computing voronoi diargrams and delaunay traingualations, prerequesite for  d3-geo-voronoi-->
-    <script src="https://unpkg.com/d3-delaunay@5"></script>
-    <!-- support for spherical delaunay data -->
-    <script src="https://unpkg.com/d3-geo-voronoi@1.6.0/dist/d3-geo-voronoi.js"></script>
-    <!-- support for contour functionality -->
-    <script src="https://unpkg.com/d3-tricontour@0.1.0"></script>
-    <!-- support for zoom and panning -->
-    <script src="https://unpkg.com/d3-geo-zoom"></script>
-    <!--<script src="d3-geo-zoom.js"></script>-->
-    <!-- for scale -->
-    <script src="https://unpkg.com/d3-geo-scale-bar@1.0.2/build/d3-geo-scale-bar.min.js"></script>
-    <!-- psudo random number generator that is seedable, nice for being able to reproduce issues -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script type="module" src="index.js"></script>
   </head>
+
   <body >
     <h1>Generating fantasy maps, on a globe</h1>
     <h3>Inspiration</h3>
@@ -52,55 +29,47 @@
           <svg class="scale"><g class="scale"></g></svg>
         </div>
         <fieldset class="options"><legend>Options</legend>
-          <label><input type="checkbox" name="scale" checked="true" onchange="ui.visualize();"></input>Scale</label>
-          <label><input type="checkbox" name="points" checked="true" onchange="ui.visualize();"></input>Points</label>
-          <label><input type="checkbox" name="polygons"  onchange="ui.visualize();"></input>Polygons</label>
-          <label><input type="checkbox" name="heightmap" checked="true" onchange="ui.visualize();"></input>Heightmap</label>
-          <label><input type="checkbox" name="coast" checked="true" onchange="ui.visualize();"></input>Coast</label>
-          <label><input type="checkbox" name="graticules" checked="true" onchange="ui.visualize();"></input>Graticules</label>
+          <label><input class="tracked" type="checkbox" name="scale" checked="true"></input>Scale</label>
+          <label><input class="tracked" type="checkbox" name="points" checked="true"></input>Points</label>
+          <label><input class="tracked" type="checkbox" name="polygons"></input>Polygons</label>
+          <label><input class="tracked" type="checkbox" name="heightmap" checked="true"></input>Heightmap</label>
+          <label><input class="tracked" type="checkbox" name="coast" checked="true"></input>Coast</label>
+          <label><input class="tracked" type="checkbox" name="graticules" checked="true"></input>Graticules</label>
           <label><input type="range" name="fidelity" min="1" max="3" value="1" step="1">Fidelity</label>
           <label><input type="checkbox" name="auto_generate">Auto-generate fidelity</label>
 
         </fieldset>
-        <button onclick="ui.generateAndVisualize()">Generate Points</button>
-        <button onclick="ui.generateGoodPointsAndVisualize()">Generate Good Points</button>
-        <button onclick="ui.generateMorePoints()">Generate Smaller Good Points</button>
+        <button id="generate-points">Generate Points</button>
+        <button id="generate-good-points">Generate Good Points</button>
+        <button id="generate-smaller-points">Generate Smaller Good Points</button>
 
-        <button onclick="ui.improveAndVisualize()">Improve Points</button>
-          <button onclick="ui.resetToFlat()">Reset to flat</button>
-        <button onclick="ui.addContinentAndVisualize(5)">Add 5 continents</button>
-        <button onclick="ui.addIslandAndVisualize(15)">Add 15 islands</button>
-        <button onclick="ui.setSeaLevelToMedianAndVisualize()" title="find middle point and shift everything so the middle point is now 0.5">Set sea level to median</button>
-        <button onclick="ui.normalizeAndVisualize()" title="0-1">normalize heightmap</button>
-        <button onclick="ui.resetViewAndVisualize()">Reset View</button>
+        <button id="improve-points">Improve Points</button>
+        <button id="reset-to-flat">Reset to flat</button>
+        <button id="add-continent">Add 5 continents</button>
+        <button id="add-islands">Add 15 islands</button>
+        <button id="set-sea-level" title="find middle point and shift everything so the middle point is now 0.5">Set sea level to median</button>
+        <button id="normalize-heightmap" title="0-1">normalize heightmap</button>
+        <button id="reset-view">Reset View</button>
         <fieldset>
             <label for="height">Height</label>
             <input type="range" orient="vertical" id="height" name="height" min="-1" max="1" value="1" step=".05">
  
-             <label for="width">Width</label>
+            <label for="width">Width</label>
             <input style="display:block;" type="range" id="width" name="width" min="0" max="3.1" value="1" step=".1">
-         </fieldset>
-
-
-
+        </fieldset>
 
         <div class="button">
-          <button onclick="ui.save()">Save</button>
+          <button id="button-save">Save</button>
           <input class="saveInput" style="margin:1em 1em 1em;width:8em;font-size:large;" />
         </div>
         <div class="button">
-          <button onclick="ui.loadAndVisualize()">Load</button>
+          <button id="button-load">Load</button>
           <select class="loadSelect" style="margin:1em 1em 1em;min-width:8em;font-size:large;"></select>
-          <button onclick="ui.delete()">Delete</button>
+          <button id="button-delete">Delete</button>
         </div>
         
-        <button onclick="ui.generatePopulationCenter()">Add Population Center</button>
+        <button id="generate-population-center">Add Population Center</button>
       </div>
-
-        <script>
-          var ui=new TerrainUI(document.getElementById('ui'));
-          ui.generateGoodTerrainAndVisualize();
-        </script>
     </div>
   </body>
 </html>

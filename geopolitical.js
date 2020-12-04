@@ -1,4 +1,6 @@
-class GeoPolitical {
+import seedrandom from 'seedrandom';
+
+export class GeoPolitical {
   constructor() {
     var $this = this;
 
@@ -12,7 +14,7 @@ class GeoPolitical {
       return total;
     }
     const SEED = 0;
-    var srand = new Math.seedrandom(SEED);
+    var srand = seedrandom(SEED);
 
     this.generateCharacterStats = function() {
       var rolls = [0, 0, 0, 0, 0, 0];

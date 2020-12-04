@@ -1,4 +1,11 @@
-class TerrainUI {
+import { Terrain } from './terrain';
+import { GeoPolitical } from './geopolitical';
+import { d3 } from './d3';
+import d3GeoZoom from 'd3-geo-zoom';
+
+// console.log(d3);
+
+export class TerrainUI {
   constructor(container, options) {
     options = options || getOptions();
     var $this = this;
@@ -9,6 +16,72 @@ class TerrainUI {
     var projection;
     var path;
 
+    let tracked = document.querySelectorAll('.tracked');
+    
+    for (const track of tracked) {
+      track.onchange = () => {
+        console.log('tracked');
+        $this.visualize();
+      };
+    }
+
+    document.getElementById('generate-points').onclick = () => {
+      $this.generateAndVisualize();
+    };
+
+    document.getElementById('generate-good-points').onclick = () => {
+      $this.generateGoodPointsAndVisualize();
+    };
+
+    document.getElementById('generate-smaller-points').onclick = () => {
+      $this.generateMorePoints();
+    };
+
+    document.getElementById('improve-points').onclick = () => {
+      $this.improveAndVisualize();
+    };
+
+    document.getElementById('reset-to-flat').onclick = () => {
+      $this.resetToFlat();
+    };
+
+    document.getElementById('add-continent').onclick = () => {
+      $this.addContinentAndVisualize(5);
+    };
+
+    document.getElementById('add-islands').onclick = () => {
+      $this.addIslandAndVisualize(15);
+    };
+
+    document.getElementById('set-sea-level').onclick = () => {
+      $this.setSeaLevelToMedianAndVisualize();
+    };
+
+    document.getElementById('normalize-heightmap').onclick = () => {
+      $this.normalizeAndVisualize();
+    };
+
+    document.getElementById('reset-view').onclick = () => {
+      $this.resetViewAndVisualize();
+    };
+
+    document.getElementById('button-save').onclick = () => {
+      $this.save();
+    };
+
+    document.getElementById('button-load').onclick = () => {
+      $this.loadAndVisualize();
+    };
+
+    document.getElementById('button-delete').onclick = () => {
+      $this.delete();
+    };
+
+    document.getElementById('generate-population-center').onclick = () => {
+      $this.generatePopulationCenter();
+    };
+
+    
     function getOptions() {
       options = options || {
         "points": false,
@@ -42,6 +115,7 @@ class TerrainUI {
         d3.select(scale).call(scaleBar);
       }
     }
+
     this.generatePopulationCenter = function() {
       this.geopolitical.generatePopulationCenter()
       //console.log(populationClasses);
@@ -50,6 +124,7 @@ class TerrainUI {
     function random(min, max) {
       return $this.terrain.random(min, max);
     }
+
     this.delete = function() {
       //delete the points value
       var name = container.getElementsByClassName('loadSelect')[0].value;
@@ -69,6 +144,7 @@ class TerrainUI {
       }
       return saves;
     }
+
     this.save = function() {
       var name = container.getElementsByClassName('saveInput')[0].value;
       if (!name) {
@@ -112,7 +188,8 @@ class TerrainUI {
     var zoom;
 
     function addZoomPan() {
-      zoom = d3.geoZoom()
+      // TODO: Fix Zoom
+      zoom = d3GeoZoom()
         //.northUp(true)
         .projection(getProjection())
         .onMove(visualize)
