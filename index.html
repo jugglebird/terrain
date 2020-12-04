@@ -1,5 +1,8 @@
-<html>
+<!doctype html>
+<html lang="en">
   <head>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Generating fantasy maps, on a globe</title>
     <link rel="stylesheet" href="styles.css">
 
@@ -93,7 +96,8 @@
         
         <button onclick="ui.generatePopulationCenter()">Add Population Center</button>
       </div>
-      <script>
+
+        <script>
           var ui=new TerrainUI(document.getElementById('ui'));
           ui.generateGoodTerrainAndVisualize();
         </script>
